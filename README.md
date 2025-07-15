@@ -1,1 +1,29 @@
 # Data-Engineer_Project
+
+
+1) Create a Workspace-> User-> Channveerm@gmail.com
+2) Create a Folder by name- Zurich Ecommerce, by just clicking on Create option at right hand side of the screen
+3) Once Folder is created, Open Zurich Ecommerce folder-> click on create and choose File option
+4) Once file is added, remain it as per the requirement and upload the table
+5) In each file we call it as Notebook1,Notebook2,...
+6) Open an Notebook-> Add these script to display our imported csv file.
+       file_path1 = "/Volumes/july_project/module_001/module_1/source_customer.csv"
+       df1 = spark.read.csv(file_path1, header=True, inferSchema=True)
+       df1.show()
+7) Also, we can create Widgets to keep our source and Target path
+    dbutils.widgets.text("Source_path", "/Volumes/july_project/module_001/module_1/") ---------  '''For Source Path'''
+    dbutils.widgets.text("Target_path", "/Volumes/july_project/Staging/Customer")    ---------    '''For Target PAth'''
+8) For creating a cleaned data frame add these script
+   target_path = dbutils.widgets.get("Target_path")
+   create_table_query = f"""
+   CREATE OR REPLACE TABLE delta.`{target_path}` (
+    Name STRING,
+    gender STRING,
+    Region STRING
+   ) USING DELTA
+   """
+   spark.sql(create_table_query) --------------''' DataFrame[]'''
+9) To read our data in Target path, use below script
+    spark.read.format("delta").load(target_path).display()
+
+   
