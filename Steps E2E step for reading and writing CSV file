@@ -1,0 +1,49 @@
+1) 
+dbutils.widgets.text("Source_path", "/Volumes/july_project/module_001/module_1/")
+dbutils.widgets.text("Target_path", "/Volumes/july_project/Staging/Customer")
+
+target_path = dbutils.widgets.get("Target_path")
+file_path1 = dbutils.widgets.get("Source_path")
+
+
+
+2) 
+df1 = spark.read.csv(file_path1, header=True, inferSchema=True)
+df1.createOrReplaceTempView("df1")
+
+3)
+create_table_query = f"""
+CREATE OR REPLACE TABLE delta.`{target_path}` (
+    Name STRING,
+    gender STRING,
+    Region STRING
+) USING DELTA
+"""
+
+spark.sql(create_table_query)
+
+4) 
+truncate_query = f"TRUNCATE TABLE delta.`{target_path}`"
+spark.sql(truncate_query)
+
+insert_query = f"""
+INSERT INTO delta.`{target_path}` (Name, gender, Region)
+SELECT Name, gender, Region FROM df1
+"""
+spark.sql(insert_query)
+
+
+5)
+query = f"""
+SELECT * FROM delta.`{target_path}`
+"""
+
+df = spark.sql(query)
+display(df)
+
+6) 
+
+Name	gender	Region
+James Ellis	Female	Alaska
+Frank Townsend	Female	Georgia
+Angela Hardy	Male	North Carolina
